@@ -1,0 +1,18 @@
+{
+  "name": "labs4-webgl-lab2",
+  "author": "Dmitriy Naumov",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5050"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "three": "^0.144.0"
+  },
+  "devDependencies": {
+    "vite": "^2.9.9"
+  }
+}
