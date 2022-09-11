@@ -1,0 +1,17 @@
+{
+  "name": "labs4-webgl-lab3",
+  "author": "Dmitriy Naumov",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "three": "^0.144.0"
+  },
+  "devDependencies": {
+    "vite": "^2.9.9"
+  }
+}
