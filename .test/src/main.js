@@ -1,6 +1,7 @@
 import * as THREE from "three"
-import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+// import { TextureLoader } from 'three/addons/loaders/TextureLoader.js'
 
 function makePiramida (width, height, segments, color) {
     var geometry = new THREE.ConeGeometry (width, height, segments)
@@ -15,11 +16,19 @@ function makePiramidaLines (width, height, segments, color) {
     )
 }
 
+function makeGroup (items) {
+    var group = new THREE.Group()
+    items.map(i => i).forEach(item => group.add(item))
+    group.getChild = (name) => group.children.find(item => item.name == name)
+    return group
+}
+
 window.onload = () => {
 
     var tick = 0
 
-    var theLoader = new GLTFLoader()
+    var gltfLoader = new GLTFLoader()
+    var textureLoader = new THREE.TextureLoader()
 
     // create renderer
     var renderer = window.WebGLRenderingContext ? 
@@ -71,27 +80,77 @@ window.onload = () => {
     cone2w.rotation.x = Math.PI
     scene.add(cone2w)
 
-    var shekel = undefined
+    // var shekel = undefined
+    // gltfLoader.load (
+    //     "./assets/shekel1.glb",
+    //     model => {
+    //         shekel = model.scene.children[0]
+    //         shekel.position.y = 24
+    //         shekel.rotation.x = Math.PI / 2
+    //         console.log(shekel)
+    //         for (var mesh of shekel.children) 
+    //             mesh.material = new THREE.MeshStandardMaterial({ color: 0xf3e420 })
+    //         scene.add(shekel)
+    //         renderScene()
+    //     }
+    // )
 
-    theLoader.load (
-        "./assets/shekel1.glb",
-        model => {
-            shekel = model.scene.children[0]
-            shekel.position.y = 24
-            shekel.rotation.x = Math.PI / 2
-            console.log(shekel)
-            for (var mesh of shekel.children) 
-                mesh.material = new THREE.MeshStandardMaterial({ color: 0xf3e420 })
-            scene.add(shekel)
-            renderScene()
+    // var gaika = undefined
+    // gltfLoader.load (
+    //     "./assets/gaika.glb",
+    //     model => {
+    //         gaika = model.scene.children[0]
+    //         let texture = textureLoader.load("./assets/gaika2.png") 
+    //         texture.encoding = THREE.sRGBEncoding
+    //         texture.flipY = false
+    //         gaika.material.map = texture
+    //         console.log(gaika)
+    //         scene.add(gaika)
+    //     }
+    // )
+
+    var calc = undefined
+    gltfLoader.load (
+        "./assets/calculator.glb",
+        glb => {
+            let buttonColors = {
+                "Btn019": "#f02330",
+                "Btn022": "#f02330",
+                "Btn023": "#f02330",
+                "Btn020": "#4545a0",
+                "Btn021": "#4546a0",
+                "Btn024": "#242426",
+                "Btn025": "#242425",
+                "default": "#f0f0f2",
+            }
+            calc = makeGroup(glb.scene.children)
+            console.log(calc)
+            for (let item of calc.children) {
+                console.log(item.name)
+                if (item.name.startsWith("Btn")) {
+                    let color = buttonColors[item.name] || buttonColors["default"]
+                    item.material = new THREE.MeshPhongMaterial({ color: color })
+                }
+                else if (item.name.startsWith("Body")) {
+                    item.material = new THREE.MeshPhongMaterial({ color: "#232325" })
+                }
+                else if (item.name.startsWith("Digit")) {
+                    item.material = new THREE.MeshPhongMaterial({ color: "#969d89" })
+                }
+            }
+            scene.add(calc)
+            calc.position.set(-30, 10, 0)
+            calc.rotation.y = Math.PI
+            calc.rotation.z = -0.3
+            calc.scale.set(10, 10, 10)
         }
     )
 
     // light
-    const light = new THREE.AmbientLight(0x404040)
+    const light = new THREE.AmbientLight(0x808080)
     scene.add(light)
-    const dlight = new THREE.DirectionalLight(0xffffff, 2)
-    dlight.position.set(-1, 3, 2)
+    const dlight = new THREE.DirectionalLight(0xffffff, 0.7)
+    dlight.position.set(-10, 30, 20)
     scene.add(dlight)
 
     function renderScene () {
@@ -102,20 +161,14 @@ window.onload = () => {
         cone1w.rotation.y += 0.005
         cone2.rotation.y += 0.005
         cone2w.rotation.y += 0.005
-
-        // Plane shaking
-        // if (tick % 5 == 0) {
-        //     plane.position.set (0.1 * Math.random(), 0, 0.1 * Math.random())
-        // }
-
-        // rotate shekel
-        shekel.rotation.z += 0.004
             
         requestAnimationFrame(renderScene)
         controls.update()
 
         renderer.render(scene, camera)
     }   
+
+    renderScene();
 
     // make it all resizable!
     window.onresize = () => {
