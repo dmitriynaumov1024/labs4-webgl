@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dg .c select {
+    width: 100%;
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+.dg.main.a {
+    min-width: 400px;
+    max-width: 80vw;
+}
