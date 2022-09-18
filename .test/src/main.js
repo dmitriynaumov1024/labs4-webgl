@@ -23,6 +23,11 @@ function makeGroup (items) {
     return group
 }
 
+function applyUvFix (texture) {
+    texture.encoding = THREE.sRGBEncoding
+    texture.flipY = false
+}
+
 window.onload = () => {
 
     var tick = 0
@@ -42,7 +47,7 @@ window.onload = () => {
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-    camera.position.set(-70, 34, 0)
+    camera.position.set(0, 34, 50)
     camera.lookAt(0, 15, 0)
 
     // make trackball controls
@@ -113,23 +118,15 @@ window.onload = () => {
     gltfLoader.load (
         "./assets/calculator.glb",
         glb => {
-            let buttonColors = {
-                "Btn019": "#f02330",
-                "Btn022": "#f02330",
-                "Btn023": "#f02330",
-                "Btn020": "#4545a0",
-                "Btn021": "#4546a0",
-                "Btn024": "#242426",
-                "Btn025": "#242425",
-                "default": "#f0f0f2",
-            }
             calc = makeGroup(glb.scene.children)
             console.log(calc)
+            let btnTexture = textureLoader.load("./assets/calc-buttons.png")
+            applyUvFix(btnTexture)
+            let btnMaterial = new THREE.MeshPhongMaterial({ map: btnTexture })
             for (let item of calc.children) {
-                console.log(item.name)
+                // console.log(item.name)
                 if (item.name.startsWith("Btn")) {
-                    let color = buttonColors[item.name] || buttonColors["default"]
-                    item.material = new THREE.MeshPhongMaterial({ color: color })
+                    item.material = btnMaterial
                 }
                 else if (item.name.startsWith("Body")) {
                     item.material = new THREE.MeshPhongMaterial({ color: "#232325" })
@@ -138,11 +135,11 @@ window.onload = () => {
                     item.material = new THREE.MeshPhongMaterial({ color: "#969d89" })
                 }
             }
-            scene.add(calc)
-            calc.position.set(-30, 10, 0)
-            calc.rotation.y = Math.PI
-            calc.rotation.z = -0.3
+            calc.rotation.x = 0.3
             calc.scale.set(10, 10, 10)
+            calc = makeGroup([calc])
+            scene.add(calc)
+            calc.position.set(0, 18, 26)
         }
     )
 
@@ -161,6 +158,10 @@ window.onload = () => {
         cone1w.rotation.y += 0.005
         cone2.rotation.y += 0.005
         cone2w.rotation.y += 0.005
+
+        if (calc) {
+            calc.rotation.y += 0.008
+        }
             
         requestAnimationFrame(renderScene)
         controls.update()
