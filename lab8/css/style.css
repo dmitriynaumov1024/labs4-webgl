@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dg .c select {
+    width: 100%;
+    background-color: transparent;
+    color: white;
+    border: none;
+}
